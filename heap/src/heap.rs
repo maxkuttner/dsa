@@ -1,10 +1,10 @@
 #[derive(Debug)]
-pub struct Heapi32 {
-    data: Vec<i32>,
+pub struct Heap<T> {
+    data: Vec<T>,
 }
 
-impl Heapi32 {
-    pub fn push(&mut self, val: i32) -> () {
+impl<T: Ord> Heap<T> {
+    pub fn push(&mut self, val: T) -> () {
         self.data.push(val);
         let mut i = &self.data.len() - 1;
         while i > 0 {
@@ -14,19 +14,17 @@ impl Heapi32 {
                 break;
             } else {
                 //swap
-                let tmp = self.data[i];
-                self.data[i] = self.data[parent_index];
-                self.data[parent_index] = tmp;
+                self.data.swap(parent_index, i);
                 i = parent_index;
             }
         }
     }
 
-    pub fn peek(&self) -> Option<&i32> {
+    pub fn peek(&self) -> Option<&T> {
         self.data.first()
     }
 
-    pub fn pop(&mut self) -> Option<i32> {
+    pub fn pop(&mut self) -> Option<T> {
         if self.data.is_empty() {
             return None;
         }
@@ -68,18 +66,20 @@ impl Heapi32 {
         Some(root)
     }
 
-    fn heapify(arr: Vec<i32>) -> Heapi32 {
-        let mut heap = Heapi32 { data: vec![] };
+    pub fn heapify(arr: Vec<T>) -> Heap<T> {
+        let mut heap = Heap { data: Vec::new() };
+        // TODO: could be improved
         for val in arr {
             heap.push(val);
         }
+
         heap
     }
 }
 
 #[test]
 fn test_push() {
-    let mut heap = Heapi32 { data: vec![] };
+    let mut heap = Heap { data: vec![] };
     heap.push(5);
     heap.push(4);
     heap.push(1);
@@ -90,14 +90,14 @@ fn test_push() {
 
 #[test]
 fn test_peek() {
-    let mut heap = Heapi32 { data: vec![] };
+    let mut heap = Heap { data: vec![] };
     heap.push(123);
     assert_eq!(heap.peek(), Some(&123))
 }
 
 #[test]
 fn test_pop() {
-    let mut heap = Heapi32 { data: vec![] };
+    let mut heap = Heap { data: vec![] };
     heap.push(5);
     heap.push(4);
     heap.push(1);
@@ -110,6 +110,10 @@ fn test_pop() {
 #[test]
 fn test_heapify() {
     let v = vec![1, 2, 3, 4, 5, -1];
-    let heap = Heapi32::heapify(v);
-    assert_eq!(heap.peek(), Some(&-1))
+    let heap = Heap::heapify(v);
+    assert_eq!(heap.peek(), Some(&-1));
+
+    let v: Vec<&str> = vec!["ab", "bc"];
+    let heap = Heap::heapify(v);
+    assert_eq!(heap.peek(), Some(&"ab"));
 }
