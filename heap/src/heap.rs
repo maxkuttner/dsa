@@ -67,6 +67,14 @@ impl Heapi32 {
 
         Some(root)
     }
+
+    fn heapify(arr: Vec<i32>) -> Heapi32 {
+        let mut heap = Heapi32 { data: vec![] };
+        for val in arr {
+            heap.push(val);
+        }
+        heap
+    }
 }
 
 #[test]
@@ -97,4 +105,11 @@ fn test_pop() {
     heap.push(10);
     assert_eq!(heap.pop(), Some(1));
     assert_eq!(heap.pop(), Some(4))
+}
+
+#[test]
+fn test_heapify() {
+    let v = vec![1, 2, 3, 4, 5, -1];
+    let heap = Heapi32::heapify(v);
+    assert_eq!(heap.peek(), Some(&-1))
 }
